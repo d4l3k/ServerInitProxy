@@ -22,7 +22,7 @@ class ServConnection < EventMachine::Connection
 		if @client
 			"from client"
 			if $first_run
-				put "First Run!"
+				puts "First Run!"
 				$s_socket = EventMachine.connect 'localhost',25565, ServConnection, false
 			end
 			$s_socket.send_data data
