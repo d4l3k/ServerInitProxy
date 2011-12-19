@@ -6,7 +6,6 @@ class Server
 	def initialize
 		puts "Connecting to client"
 		@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, Connection, true
-		end
 		@s_socket = false
 	end
 end
