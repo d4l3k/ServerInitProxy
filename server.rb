@@ -1,29 +1,32 @@
-require 'socket'
-require 'thread'
+require 'rubygems'
+require 'eventmachine'
 		
 class Server
+	attr_accessor :c_socket, :s_socket
 	def initialize
-		@@c_socket = TCPSocket.open("mc.outerearth.net",25564)
-		puts "Connected to client"
-		@@s_socket = false
-		
-		puts "Client listening thread open."
-		while data = @@c_socket.getc
-			if !@@s_socket
-				@@s_socket = TCPSocket.open("10.108.3.5",25565)
-				puts "connected to server"
-				@@s = Thread.new do
-					puts "Server listening thread open."
-					while data = @@s_socket.getc
-						@@c_socket.putc data
-						puts "To C: #{data}"
-					end
-				end
-			end
-			@@s_socket.putc data
-			puts "To S: #{data}"
+		@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, Connection do |con|
+			con.client = true
+		end
+		@s_socket = EventMachine.connect 'localhost',25565, Connection do |con|
+			con.client = false
 		end
 	end
 end
 
-s = Server.new
+class Connection < EM::Connection
+	def post_init
+		puts "Connected. Client: #{@client}"
+	end
+	def recieve_data data
+		if @client
+			@@server.s_socket.send_data data
+			puts "To S: #{data}"
+		else
+			@@server.c_socket.send_data data
+			puts "To C: #{data}"
+		end
+	end
+end
+EventMachine.run {
+	@@server = Server.new
+}
