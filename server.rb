@@ -33,6 +33,7 @@ class Connection < EventMachine::Connection
 		end
 	end
 	def unbind
+	end
 end
 EventMachine.run {
 	@@server = Server.new
