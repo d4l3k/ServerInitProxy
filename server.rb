@@ -19,12 +19,13 @@ class Connection < EM::Connection
 		puts "Connected. Client: #{@client}"
 	end
 	def recieve_data data
+		puts "Recieved data"
 		if @client
+			"from client"
 			if !@@server.s_socket
 				put "Connecting to server"
 				@@server.s_socket = EventMachine.connect 'localhost',25565, Connection, false
 			end
-
 			@@server.s_socket.send_data data
 			puts "To S: #{data}"
 		else
