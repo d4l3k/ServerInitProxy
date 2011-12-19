@@ -12,6 +12,7 @@ class Server
 end
 
 class Connection < EM::Connection
+	attr_accessor :client
 	def post_init
 		puts "Connected. Client: #{@client}"
 	end
