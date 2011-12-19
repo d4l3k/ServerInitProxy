@@ -4,6 +4,7 @@ require 'eventmachine'
 class Server
 	attr_accessor :c_socket, :s_socket
 	def initialize
+		puts "Connecting to client"
 		@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, Connection do |con|
 			con.client = true
 		end
@@ -18,7 +19,8 @@ class Connection < EM::Connection
 	end
 	def recieve_data data
 		if @client
-			if @@server.s_socket == false
+			if !@@server.s_socket
+				put "Connecting to server"
 				@@server.s_socket = EventMachine.connect 'localhost',25565, Connection do |con|
                 		        con.client = false
 		                end
