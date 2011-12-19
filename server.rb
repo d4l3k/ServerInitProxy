@@ -2,15 +2,14 @@ require 'rubygems'
 require 'eventmachine'
 		
 class Server
-	attr_accessor :c_socket, :s_socket
 	def initialize
 		puts "Connecting to client"
-		@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, Connection, true
-		@s_socket = false
+		@@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, Connection, true
+		@@s_socket = false
 	end
 end
 
-class Connection < EM::Connection
+class Connection < EventMachine::Connection
 	attr_accessor :client
 	def initialize client
 		@client = client
@@ -22,17 +21,18 @@ class Connection < EM::Connection
 		puts "Recieved data"
 		if @client
 			"from client"
-			if !@@server.s_socket
+			if !@@s_socket
 				put "Connecting to server"
-				@@server.s_socket = EventMachine.connect 'localhost',25565, Connection, false
+				@@s_socket = EventMachine.connect 'localhost',25565, Connection, false
 			end
-			@@server.s_socket.send_data data
+			@@s_socket.send_data data
 			puts "To S: #{data}"
 		else
-			@@server.c_socket.send_data data
+			@@c_socket.send_data data
 			puts "To C: #{data}"
 		end
 	end
+	def unbind
 end
 EventMachine.run {
 	@@server = Server.new
