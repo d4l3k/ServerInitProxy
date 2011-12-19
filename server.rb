@@ -17,7 +17,7 @@ class ServConnection < EventMachine::Connection
 	def post_init
 		puts "Connected. Client: #{@client}"
 	end
-	def recieve_data data
+	def receive_data data
 		puts "Recieved data"
 		if @client
 			"from client"
