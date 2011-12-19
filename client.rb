@@ -6,22 +6,22 @@ require 'eventmachine'
 
 class Connection < EM::Connection
     def initialize
-	    if !@@server
-		    @@server = self
+	    if !$server
+		    $server = self
 		    @s = true
 		    puts "Server connected!"
 	    elsif
-		    @@client = self
+		    $client = self
 		    @s = false
 		    puts "Client connected!"
 	    end
     end
     def receive_data(data)
 	    if !@s
-		    @@server.send_data data
+		    $server.send_data data
 		    puts "to server"
 	    else
-		    @@client.send_data data
+		    $client.send_data data
 		    puts "to client"
 	    end
 	    puts data

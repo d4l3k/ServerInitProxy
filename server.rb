@@ -4,8 +4,8 @@ require 'eventmachine'
 class Server
 	def initialize
 		puts "Connecting to client"
-		@@c_socket = EventMachine.connect 'mc.outerearth.net', 25564, ServConnection, true
-		@@first_run = true
+		$c_socket = EventMachine.connect 'mc.outerearth.net', 25564, ServConnection, true
+		$first_run = true
 	end
 end
 
@@ -21,14 +21,14 @@ class ServConnection < EventMachine::Connection
 		puts "Recieved data"
 		if @client
 			"from client"
-			if @@first_run
+			if $first_run
 				put "First Run!"
-				@@s_socket = EventMachine.connect 'localhost',25565, ServConnection, false
+				$s_socket = EventMachine.connect 'localhost',25565, ServConnection, false
 			end
-			@@s_socket.send_data data
+			$s_socket.send_data data
 			puts "To S: #{data}"
 		else
-			@@c_socket.send_data data
+			$c_socket.send_data data
 			puts "To C: #{data}"
 		end
 	end
@@ -36,5 +36,5 @@ class ServConnection < EventMachine::Connection
 	end
 end
 EventMachine.run {
-	@@server = Server.new
+	$server = Server.new
 }
